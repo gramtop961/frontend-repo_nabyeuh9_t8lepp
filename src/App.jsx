@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from 'react'
-import { BrowserRouter, Routes, Route, Link, useNavigate, useParams } from 'react-router-dom'
+import { Routes, Route, Link, useNavigate, useParams } from 'react-router-dom'
 import { ShoppingCart, Star, ShieldCheck, Menu, Search, Heart, Package, BadgeCheck, Moon, Sun } from 'lucide-react'
 import { apiGet, apiPost, apiPut } from './lib/api'
 import './index.css'
@@ -157,7 +157,7 @@ function ProductPage() {
   const nav = useNavigate()
 
   useEffect(() => {
-    apiGet(`/api/products/${slug}`).then(setProduct)
+    apiGet(`/api/products/${slug}`).then(setProduct).catch(() => setProduct(null))
   }, [slug])
 
   const addToCart = async () => {
@@ -283,7 +283,7 @@ function CartPage() {
 
 function PackagingPage() {
   const [guides, setGuides] = useState([])
-  useEffect(() => { apiGet('/api/packaging').then(setGuides) }, [])
+  useEffect(() => { apiGet('/api/packaging').then(setGuides).catch(() => setGuides([])) }, [])
   return (
     <div className="max-w-3xl mx-auto px-4 py-10">
       <h1 className="text-2xl font-semibold mb-4">Safety & Packaging</h1>
@@ -302,7 +302,7 @@ function PackagingPage() {
 
 function AboutPage() {
   const [about, setAbout] = useState(null)
-  useEffect(() => { apiGet('/api/about').then(setAbout) }, [])
+  useEffect(() => { apiGet('/api/about').then(setAbout).catch(() => setAbout(null)) }, [])
   if (!about) return null
   return (
     <div className="max-w-4xl mx-auto px-4 py-10">
@@ -345,18 +345,14 @@ function Hero() {
   )
 }
 
-function AppRoutes() {
+export default function App() {
   return (
-    <BrowserRouter>
-      <Routes>
-        <Route path="/" element={<Home />} />
-        <Route path="/product/:slug" element={<Shell><ProductPage /></Shell>} />
-        <Route path="/cart" element={<Shell><CartPage /></Shell>} />
-        <Route path="/packaging" element={<Shell><PackagingPage /></Shell>} />
-        <Route path="/about" element={<Shell><AboutPage /></Shell>} />
-      </Routes>
-    </BrowserRouter>
+    <Routes>
+      <Route path="/" element={<Home />} />
+      <Route path="/product/:slug" element={<Shell><ProductPage /></Shell>} />
+      <Route path="/cart" element={<Shell><CartPage /></Shell>} />
+      <Route path="/packaging" element={<Shell><PackagingPage /></Shell>} />
+      <Route path="/about" element={<Shell><AboutPage /></Shell>} />
+    </Routes>
   )
 }
-
-export default AppRoutes
